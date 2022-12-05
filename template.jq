@@ -7,11 +7,11 @@ def getinput:
   ;
 
 def part1:
-  "pending..."
+  null
   ;
 
 def part2:
-  "pending..."
+  null
   ;
 
 getinput as $input
