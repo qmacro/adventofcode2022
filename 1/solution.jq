@@ -17,7 +17,5 @@ def part2:
   map(add) | sort[-3:] | add;
 
 lib::getinput_1 as $input
-| [
-    ($input | part1),
-    ($input | part2)
-  ]
+| ($input | part1), ($input | part2)
+  

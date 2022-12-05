@@ -15,7 +15,5 @@ def part2:
   ;
 
 getinput as $input
-| [
-    ($input | part1),
-    ($input | part2)
-  ]
+| ($input | part1), ($input | part2)
+  
