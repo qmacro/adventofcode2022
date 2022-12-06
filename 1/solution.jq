@@ -7,8 +7,19 @@ import "lib" as lib;
 # -s (slurp all inputs into an array)
 # i.e. jq -f solution.jq -R -s input.dat
 
-# When initially read in, the input will look like this:
-# "1000\n2000\n3000\n\n4000\n\n5000\n6000\n\n7000\n8000\n9000\n\n10000\n"
+# Need some extra input processing to turn this:
+# [["1000"],["2000"],["3000"],[],["4000"],...]
+# into this:
+# [[1000,2000,3000],[4000],...]
+def processinput: 
+  reduce .[] as $value (
+    [[]];
+    if ($value | length > 0)
+    then .[-1] += [$value[0]|tonumber] 
+    else . + [[]]
+    end
+  )
+  ;
 
 def part1:
   map(add) | max;
@@ -16,6 +27,9 @@ def part1:
 def part2:
   map(add) | sort[-3:] | add;
 
-lib::getinput_1 as $input
-| ($input | part1), ($input | part2)
-  
+def main:
+  lib::getinput_split_on("\n") | processinput as $input
+  | ($input | part1), ($input | part2)
+  ;
+
+main

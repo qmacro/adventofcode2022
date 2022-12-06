@@ -1,9 +1,8 @@
 #!/usr/bin/env jq
 
-def getinput_1:
+def getinput_split_on(sep):
   sub("\n$";"")
-  | split("\n\n")
-  | map(split("\n")|map(tonumber))
+  | split("\n")
+  | map(split(sep))
   ;
-
 

@@ -42,14 +42,6 @@ def play(a;outcome):
   | first.key
   ;
 
-# Day 2 specific input but getting more generic; splits lines, then
-# splits into "records" based on separator given
-def getinput(sep):
-  sub("\n$";"")
-  | split("\n")
-  | map(split(sep))
-  ;
-
 # Calculate the total (common for parts 1 and 2)
 def calculate(a;b):
   points(b) + score(a;b)
@@ -68,7 +60,7 @@ def part2:
   ;
 
 def main:
-  getinput(" ") as $input
+  lib::getinput_split_on(" ") as $input
   | ($input | part1), ($input | part2)
   ;
 
