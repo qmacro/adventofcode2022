@@ -2,8 +2,6 @@
 
 import "lib" as lib;
 
-def second: .[1];
-
 # Starting to tire of writing map(select())
 def filter(condition): map(select(condition));
 
@@ -17,31 +15,20 @@ def torange:
 # Takes an array of two ranges: [[3,7],[2,8]]
 # Returns whether one is fully contained within the other
 def isfullycontained:
-  . as $ranges
-  | sort
-  | (
-  #        first          second
-  #   [[first,second],[first,second]]
-      (first|first) <= (second|first) 
-      and
-      (first|second) >= (second|second)
-    ) as $result 
-  | if $result then [$ranges, $result] | debug | .[1] else $result end
+  (((.[0][0] - .[1][0]) * (.[0][1] - .[1][1])) <= 0)
   ;
   
-def part1:
-  map(
-    map(torange)
-    | isfullycontained
-  )
-  | filter(.)
-  | length
+# Takes an array of two ranges: [[3,7],[2,8]]
+# Returns whether they overlap at all
+def doesoverlap:
+  (((.[0][0] - .[1][1]) * (.[0][1] - .[1][0])) <= 0)
   ;
-
-def part2:
-  null
-  ;
+  
+def part1: isfullycontained;
+def part2: doesoverlap;
 
 lib::getinput_split_on(",") as $input
-| ($input | part1), ($input | part2)
+|
+  ($input | map(map(torange) | part1) | filter(.) | length),
+  ($input | map(map(torange) | part2) | filter(.) | length)
   
