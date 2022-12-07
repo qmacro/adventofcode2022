@@ -1,4 +1,4 @@
-#!/usr/bin/envjq
+#!/usr/bin/env jq
 
 import "lib" as lib;
 
