@@ -23,14 +23,9 @@ def common:
 # Takes a character
 # Returns the priority (a=1,z=26,A=27,Z=52)
 def priority:
-  debug |
   explode | first as $value
   | if $value > 96 then $value - 96 else $value - 38 end
   ;
-
-def alphabet: "abcdefghijklmnopqrstuvwxyz";
-def alphaupper: alphabet | ascii_upcase;
-def alphalower: alphabet | ascii_downcase;
 
 def part1:
   map(halves)
@@ -39,18 +34,30 @@ def part1:
   | add
   ;
 
-# Takes an array of arrays of letters, plus a letter to search for
-def rucksackcontains(letter):
-  all(
-    .[0] | contains([letter]),
-    .[1] | contains([letter]),
-    .[2] | contains([letter])
-  )
-  ;
+# Given an array of arrays of letters (letter lists),
+# find the letter common to all letter lists. 
+# Don't like this, but it will do for now.
+def findcommonletter:
+
+  # Get all but the first letter list as $rest
+  (.[1:] | map(unique)) as $rest
+
+  # Then start with the first letter list
+  | first
+
+  # and go through each letter in it, checking if it's in the other letter lists
+  | map(. as $letter | $rest | map(if (contains([$letter])) then $letter else null end))
+
+  # This will result in an array like this:
+  # [[[null,"v"],[null,null],...]] but one inner item will be like this: ["r", "r"]
+  # and that's the common letter. So just grab that item, and pull out the (first) letter
+  | map(select(all)) | flatten | first ;
 
 def part2:
-  (alphaupper + alphalower | split("")) as $letters
-  | [_nwise(3)]
+  [_nwise(3)]
+  | map(findcommonletter)
+  | map(priority)
+  | add
   ;
 
 def main:
