@@ -5,6 +5,6 @@ set -eo pipefail
 declare day="${1:?Specify day to run}"
 
 # Use test data unless env var PRODUCTION is set
-[[ -n $PRODUCTION ]] && data=input.dat || data=test.dat
+[[ $PRD -eq 1 ]] && data=input.dat || data=test.dat
 
 jq -L . -f "$day/solution.jq" -c -R -s "$day/$data"
