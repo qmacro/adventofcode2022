@@ -34,32 +34,29 @@ def tomoves:
   | map(map_values(tonumber))
   ;
 
-def move(from;to):
-  .[from][-1] as $item
-  | .[to] += [$item]
-  | del(.[from][-1])
-  ;
-
-def execute($stacks;$move):
-  [range($move.move)]|map($stacks|move($move.from - 1;$move.to - 1))
-  ;
-
 def part1:
 
   # Calculate how many stacks there are
-  # (assuming single letter cargo). The +1 is to 
-  # add an imaginary space on the end of the first
-  # row to have every stack be represented as "[x] ".
   ((first|length + 1) / 4) as $stackcount
 
   # Stack numbers then empty line separates stacks from moves
+  | (.[index("") + 1:] | tomoves) as $moves
   | (.[:index("") - 1] | tostacks(stackmatchpattern($stackcount))) as $stacks
-  | .[index("") + 1:]  | tomoves as $moves
 
-  | $moves | .[0] | execute($stacks;.) as $stacks
-  | $moves | .[1] | execute($stacks;.) as $stacks
-  | $stacks
-#  | $moves | map(execute($stacks;.))
+  # Apply all the move instructions
+  | $moves | reduce .[] as $move (
+      $stacks;
+      
+      # Use a nested reduce to apply a move N times
+      reduce range($move.move) as $i (
+        .;
+        .[$move.to - 1] += [.[$move.from - 1][-1]]
+        | del(.[$move.from - 1][-1])
+      )
+    )
+
+  # Concatenate the top letter (crate) from each stack
+  | map(.[-1] | gsub("[^A-Z]+";"")) | add
   ;
 
 def part2:
