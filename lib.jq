@@ -10,3 +10,12 @@ def getinput_split_on(sep):
   | map(split(sep))
   ;
 
+# Similar to https://ramdajs.com/docs/#aperture
+def aperture($size):
+  . as $list
+  | reduce range($list | length - $size + 1) as $i (
+      [];
+      . + [$list[$i:$i + $size]]
+    )
+  ;
+ 
