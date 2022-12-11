@@ -34,7 +34,7 @@ def tomoves:
   | map(map_values(tonumber))
   ;
 
-def part1:
+def solve($part):
 
   # Calculate how many stacks there are
   ((first|length + 1) / 4) as $stackcount
@@ -47,22 +47,27 @@ def part1:
   | $moves | reduce .[] as $move (
       $stacks;
       
-      # Use a nested reduce to apply a move N times
-      reduce range($move.move) as $i (
-        .;
-        .[$move.to - 1] += [.[$move.from - 1][-1]]
-        | del(.[$move.from - 1][-1])
-      )
+      # Determine the block of crates to move:
+      # Part 1 is one at a time, Part 2 is as a chunk
+      (
+        .[$move.from - 1][$move.move * -1:]
+        | if ($part == 1) then reverse else . end 
+      ) as $block
+
+      # Add block to target stack
+      | .[$move.to - 1] += $block
+
+      # Remove block from source stack
+      | .[$move.from - 1] |= .[:$move.move * -1]
+
     )
 
   # Concatenate the top letter (crate) from each stack
   | map(.[-1] | gsub("[^A-Z]+";"")) | add
   ;
 
-def part2:
-  null
-  ;
-
 lib::getinput as $input
-| ($input | part1), ($input | part2)
+| 
+  ($input | solve(1)),
+  ($input | solve(2))
   
