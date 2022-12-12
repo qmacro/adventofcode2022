@@ -11,5 +11,7 @@ def part2:
   ;
 
 lib::getinput_split_on("") as $input
-| ($input | part1), ($input | part2)
+|
+  ($input | part1), 
+  ($input | part2)
   
