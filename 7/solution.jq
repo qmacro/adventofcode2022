@@ -45,6 +45,9 @@ def part1:
 
       else . end
   )
+  | .dircontents
+  #| with_entries(.value |= add)
+  | map(add | select(. <= 100000)) | add
 ;
 
 def part2:
