@@ -13,7 +13,7 @@ def what:
   | if (startswith("$ cd")) then
       if ($parts[2] == "..") then ["up"] else ["down", $parts[2]] end
     else
-      if ($parts[0] | match("^[0-9]+$")) then ["file"] + $parts else "dunno" end
+      if ($parts[0] | match("^[0-9]+$")) then ["file"] + $parts else empty end
     end
 ;
 
@@ -27,8 +27,10 @@ def part1:
       dircontents: {}
     };
 
+      ([$what, .dirlist] | debug) as $_
+
       # If we descend into a dir, add it to the list
-      if ($what[0] == "down") then .dirlist += [$what[1]] else . end
+    | if ($what[0] == "down") then .dirlist += [$what[1]] else . end
 
       # If we ascend out of a dir (..), then remove the most recent dir 
       # from the list
